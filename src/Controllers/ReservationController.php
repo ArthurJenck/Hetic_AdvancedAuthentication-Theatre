@@ -1,0 +1,56 @@
+<?php
+
+namespace App\Controllers;
+
+use App\Middleware\IsGranted;
+use App\Repositories\ReservationRepository;
+use App\Repositories\SpectacleRepository;
+
+class ReservationController
+{
+    private ReservationRepository $reservationRepository;
+    private SpectacleRepository $spectacleRepository;
+
+    public function __construct()
+    {
+        $this->reservationRepository = new ReservationRepository();
+        $this->spectacleRepository = new SpectacleRepository();
+    }
+
+    #[IsGranted]
+    public function create(): void
+    {
+        $spectacleId = (int)($_POST['spectacle_id'] ?? 0);
+        $userId = $_SESSION['user']->sub;
+
+        if (!$spectacleId) {
+            http_response_code(400);
+            echo 'Spectacle non spécifié';
+            return;
+        }
+
+        $spectacle = $this->spectacleRepository->findById($spectacleId);
+
+        if (!$spectacle || !$spectacle->hasAvailableSeats()) {
+            $_SESSION['error'] = 'Plus de places disponibles';
+            header("Location: /spectacles/$spectacleId");
+            exit;
+        }
+
+        $this->reservationRepository->create($userId, $spectacleId);
+        $this->spectacleRepository->decrementSeats($spectacleId);
+
+        $_SESSION['success'] = "Réservation effectuée avec succès";
+        header('Location: /profile');
+    }
+
+    #[IsGranted]
+    public function myReservations(): void
+    {
+        $userId = $_SESSION['user']->sub;
+        $reservations =  $this->reservationRepository->findByUserId($userId);
+        $user = $_SESSION['user'];
+
+        require __DIR__ . '/../../views/profile.php';
+    }
+}
