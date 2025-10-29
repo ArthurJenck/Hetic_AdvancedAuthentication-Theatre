@@ -1,6 +1,6 @@
 <?php
 
-namespace APP\Auth;
+namespace App\Auth;
 
 class JWT
 {
@@ -14,7 +14,7 @@ class JWT
 
     private function base64UrlDecode(string $data): string
     {
-        return base64_decode(strtr($data, '-_', '+:'));
+        return base64_decode(strtr($data, '-_', '+/'));
     }
 
     private function __construct()
@@ -31,20 +31,20 @@ class JWT
         return self::$instance;
     }
 
-    public function generateJWT(JTWPayload $payload): string
+    public function generateJWT(JWTPayload $payload): string
     {
         $header = ['alg' => 'HS256', 'typ' => 'JWT'];
 
-        $headerBase64 = $this->base64URLEncode(json_encode($header));
+        $headerBase64 = $this->base64UrlEncode(json_encode($header));
         $payloadBase64 = $this->base64UrlEncode(json_encode($payload));
 
         $signature = hash_hmac('sha256', "$headerBase64.$payloadBase64", $this->secret, true);
-        $signatureBase64 = $this->base64UrlEncode(json_encode($signature));
+        $signatureBase64 = $this->base64UrlEncode($signature);
 
         return "$headerBase64.$payloadBase64.$signatureBase64";
     }
 
-    public function validateJWT(string $token): ?JTWPayload
+    public function validateJWT(string $token): ?JWTPayload
     {
         $parts = explode('.', $token);
 
@@ -67,7 +67,7 @@ class JWT
             return null;
         }
 
-        $payload = new JTWPayload(
+        $payload = new JWTPayload(
             $data['sub'],
             $data['email'] ?? '',
             $data['role'] ?? null

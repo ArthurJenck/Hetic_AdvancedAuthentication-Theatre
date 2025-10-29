@@ -10,6 +10,7 @@ class Router
 {
     private array $routes = [];
     private JWT $jwt;
+    private string $basePath;
 
     private function addRoute(string $method, string $path, string $handler): void
     {
@@ -18,11 +19,11 @@ class Router
 
     private function checkAuthorization(IsGranted $attribute): void
     {
-        $token = $_COOKIE['token'] ?? null;
+        $token = $_COOKIE['access_token'] ?? null;
 
         if (!$token) {
             http_response_code(401);
-            header("Location: /login");
+            header("Location: " . $this->url('/login'));
             exit;
         }
 
@@ -30,8 +31,8 @@ class Router
 
         if (!$payload) {
             http_response_code(401);
-            setcookie('token', '', time() - 3600, "/");
-            header('Location: /login');
+            setcookie('access_token', '', time() - 3600, $this->basePath . "/");
+            header('Location: ' . $this->url('/login'));
             exit;
         }
 
@@ -69,8 +70,14 @@ class Router
     public function __construct(JWT $jwt)
     {
         $this->jwt = $jwt;
+        $scriptName = $_SERVER['SCRIPT_NAME'];
+        $this->basePath = strtolower(str_replace('/index.php', '', $scriptName));
     }
 
+    public function url(string $path): string
+    {
+        return $this->basePath . $path;
+    }
     public function get(string $path, string $handler): void
     {
         $this->addRoute("GET", $path, $handler);
@@ -85,8 +92,17 @@ class Router
     {
         $method = $_SERVER["REQUEST_METHOD"];
         $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $uri = strtolower($uri);
 
-        $uri = preg_replace('#^/AuthentificationAvancee/theatre/public#', '', $uri);
+        if (strpos($uri, $this->basePath) === 0) {
+            $uri = substr($uri, strlen($this->basePath));
+        }
+
+        if (empty($uri)) {
+            $uri = '/';
+        }
+
+        $_SERVER['BASE_PATH'] = $this->basePath;
 
         if (isset($this->routes[$method][$uri])) {
             $this->executeRoute($this->routes[$method][$uri], []);

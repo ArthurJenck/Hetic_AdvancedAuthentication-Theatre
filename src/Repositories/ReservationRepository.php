@@ -25,7 +25,7 @@ class ReservationRepository
 
     public function findByUserId(int $userId): array
     {
-        $stmt = $this->pdo->prepare("SELECT r.*, s;title, s.date FROM reservations r JOIN spectacles s ON r.spectacle_id = s.id WHERE r.user_id = ? ORDER BY s.date DESC");
+        $stmt = $this->pdo->prepare("SELECT r.*, s.title, s.date FROM reservations r JOIN spectacles s ON r.spectacle_id = s.id WHERE r.user_id = ? ORDER BY s.date DESC");
         $stmt->execute([$userId]);
         $data = $stmt->fetchAll();
 

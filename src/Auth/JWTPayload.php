@@ -2,7 +2,7 @@
 
 namespace App\Auth;
 
-class JTWPayload
+class JWTPayload
 {
     public int $sub;
     public string $email;

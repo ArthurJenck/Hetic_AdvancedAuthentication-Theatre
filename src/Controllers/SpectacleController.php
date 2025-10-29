@@ -17,8 +17,8 @@ class SpectacleController
     public function list(): void
     {
         $spectacles = $this->spectacleRepository->findAll();
-        $user = $_SESSION['user'] ?? null;
-        require __DIR__ . '/../../view/spectacles/list.php';
+        $user = getCurrentUser();
+        require __DIR__ . '/../../views/spectacles/list.php';
     }
 
     public function show(string $id): void
@@ -31,18 +31,18 @@ class SpectacleController
             return;
         }
 
-        $user = $_SESSION['user'] ?? null;
+        $user = getCurrentUser();
         require __DIR__ . '/../../views/spectacles/detail.php';
     }
 
     #[IsGranted('admin')]
     public function showCreate(): void
     {
-        $user = $_SESSION['user'];
-        require __DIR__ . '/../../views/spectacles.create.php';
+        $user = getCurrentUser();
+        require __DIR__ . '/../../views/spectacles/create.php';
     }
 
-    #[isGranted('admin')]
+    #[IsGranted('admin')]
     public function create(): void
     {
         $title = $_POST['title'] ?? '';
@@ -52,11 +52,11 @@ class SpectacleController
 
         if (empty($title) || empty($date) || $seats <= 0) {
             $_SESSION['error'] = "Tous les champs sont requis";
-            header('Location: /spectacles/create');
+            header('Location: ' . url('/spectacles/create'));
             exit;
         }
 
         $this->spectacleRepository->create($title, $description, $date, $seats);
-        header('Location: /spectacles');
+        header('Location: ' . url('/spectacles'));
     }
 }

@@ -6,7 +6,7 @@ class HomeController
 {
     public function index(): void
     {
-        $user = $_SESSION["user"] ?? null;
+        $user = getCurrentUser();
         require __DIR__ . "/../../views/home.php";
     }
 }

@@ -26,7 +26,7 @@ class UserRepository
 
     public function findById(int $id): ?User
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE user_id = ?");
+        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE id = ?");
         $stmt->execute([$id]);
         $data =  $stmt->fetch();
 

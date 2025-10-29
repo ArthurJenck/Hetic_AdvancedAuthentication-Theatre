@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Auth\JWT;
-use App\Auth\JTWPayload;
+use App\Auth\JWTPayload;
 use App\Auth\RefreshTokenManager;
 use App\Repositories\UserRepository;
 
@@ -22,28 +22,28 @@ class AuthController
 
     public function showLogin(): void
     {
-        require __DIR__ . '/../../view/login.php';
+        require __DIR__ . '/../../views/login.php';
     }
 
     public function login(): void
     {
         $email = $_POST["email"] ?? '';
-        $password = $_POST['passwordd'] ?? '';
+        $password = $_POST['password'] ?? '';
 
         $user = $this->userRepository->findByEmail($email);
 
         if (!$user || !$user->verifyPassword($password)) {
             $_SESSION['error'] = 'Identifiants incorrects';
-            header("Location: /login");
+            header("Location: " . url('/login'));
             exit;
         }
 
-        $payload = new JTWPayload(userId: $user->id, email: $user->email, role: $user->role);
+        $payload = new JWTPayload(userId: $user->id, email: $user->email, role: $user->role);
 
         $accessToken = $this->jwt->generateJWT($payload);
         $refreshToken = $this->refreshTokenManager->create($user->id);
 
-        setcookie("token", $accessToken, [
+        setcookie("access_token", $accessToken, [
             'expires' => $payload->exp,
             "path" => '/',
             'httponly' => true,
@@ -52,16 +52,16 @@ class AuthController
         ]);
 
 
-        require __DIR__ . '/../../config/config.php';
+        $config = require __DIR__ . '/../../config.php';
         setcookie('refresh_token', $refreshToken, [
-            'expires' => 60 * 60 * 24 * 30,
+            'expires' => time() + $config['jwt']['refresh_token_expiration'],
             'path' => '/',
             'httponly' => true,
             'secure' => true,
             'samesite' => 'Strict',
         ]);
 
-        header("Location: /");
+        header("Location: " . url('/'));
     }
 
     public function refresh(): void
@@ -90,10 +90,10 @@ class AuthController
             exit;
         }
 
-        $payload = new JTWPayload($user->id, $user->email, $user->role);
+        $payload = new JWTPayload($user->id, $user->email, $user->role);
         $newAccessToken = $this->jwt->generateJWT($payload);
 
-        setcookie('token', $newAccessToken, [
+        setcookie('access_token', $newAccessToken, [
             'expires' => $payload->exp,
             'path' => '/',
             'httponly' => true,
@@ -112,10 +112,10 @@ class AuthController
             $this->refreshTokenManager->revoke($refreshToken);
         }
 
-        setcookie('token', '', time() - 3600, '/');
+        setcookie('access_token', '', time() - 3600, '/');
         setcookie('refresh_token', '', time() - 3600, '/');
 
         session_destroy();
-        header('Location: /');
+        header('Location: ' . url('/'));
     }
 }

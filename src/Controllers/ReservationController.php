@@ -21,7 +21,8 @@ class ReservationController
     public function create(): void
     {
         $spectacleId = (int)($_POST['spectacle_id'] ?? 0);
-        $userId = $_SESSION['user']->sub;
+        $user = getCurrentUser();
+        $userId = $user->sub;
 
         if (!$spectacleId) {
             http_response_code(400);
@@ -33,7 +34,7 @@ class ReservationController
 
         if (!$spectacle || !$spectacle->hasAvailableSeats()) {
             $_SESSION['error'] = 'Plus de places disponibles';
-            header("Location: /spectacles/$spectacleId");
+            header("Location: " . url("/spectacles/$spectacleId"));
             exit;
         }
 
@@ -41,15 +42,15 @@ class ReservationController
         $this->spectacleRepository->decrementSeats($spectacleId);
 
         $_SESSION['success'] = "Réservation effectuée avec succès";
-        header('Location: /profile');
+        header('Location: ' . url('/profile'));
     }
 
     #[IsGranted]
     public function myReservations(): void
     {
-        $userId = $_SESSION['user']->sub;
+        $user = getCurrentUser();
+        $userId = $user->sub;
         $reservations =  $this->reservationRepository->findByUserId($userId);
-        $user = $_SESSION['user'];
 
         require __DIR__ . '/../../views/profile.php';
     }
