@@ -33,7 +33,6 @@ class ReservationController
         $spectacle = $this->spectacleRepository->findById($spectacleId);
 
         if (!$spectacle || !$spectacle->hasAvailableSeats()) {
-            $_SESSION['error'] = 'Plus de places disponibles';
             header("Location: " . url("/spectacles/$spectacleId"));
             exit;
         }
@@ -41,7 +40,6 @@ class ReservationController
         $this->reservationRepository->create($userId, $spectacleId);
         $this->spectacleRepository->decrementSeats($spectacleId);
 
-        $_SESSION['success'] = "Réservation effectuée avec succès";
         header('Location: ' . url('/profile'));
     }
 

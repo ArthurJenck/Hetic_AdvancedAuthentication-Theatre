@@ -22,13 +22,6 @@
 
         <h1>Mon profil</h1>
 
-        <?php if (isset($_SESSION['success'])): ?>
-            <div class="success">
-                <?= htmlspecialchars($_SESSION['success']) ?>
-                <?php unset($_SESSION['success']); ?>
-            </div>
-        <?php endif; ?>
-
         <div class="user-info">
             <p><strong>Email :</strong> <?= htmlspecialchars($user->email) ?></p>
             <p><strong>Rôle :</strong> <?= htmlspecialchars($user->role) ?></p>

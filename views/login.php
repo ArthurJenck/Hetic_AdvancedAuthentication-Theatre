@@ -17,13 +17,6 @@
 
         <h1>Connexion</h1>
 
-        <?php if (isset($_SESSION['error'])): ?>
-            <div class="error">
-                <?= htmlspecialchars($_SESSION['error']) ?>
-                <?php unset($_SESSION['error']); ?>
-            </div>
-        <?php endif; ?>
-
         <form method="POST" action="<?= url('/login') ?>">
             <label for="email">Email</label>
             <input type="email" id="email" name="email" required placeholder="alicedupont@gmail.com">

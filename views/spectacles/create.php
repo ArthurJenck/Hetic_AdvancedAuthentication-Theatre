@@ -19,13 +19,6 @@
 
         <h1>Créer un spectacle</h1>
 
-        <?php if (isset($_SESSION['error'])): ?>
-            <div class="error">
-                <?= htmlspecialchars($_SESSION['error']) ?>
-                <?php unset($_SESSION['error']); ?>
-            </div>
-        <?php endif; ?>
-
         <form method="POST" action="<?= url('/spectacles/create') ?>">
             <label for="title">Titre</label>
             <input type="text" id="title" name="title" required>

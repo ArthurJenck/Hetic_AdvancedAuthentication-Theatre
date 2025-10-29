@@ -8,23 +8,47 @@ function url(string $path): string
 
 function getCurrentUser(): ?object
 {
-    if (isset($_SESSION['user'])) {
-        return $_SESSION['user'];
+    $accessToken = $_COOKIE['access_token'] ?? null;
+    $jwt = \App\Auth\JWT::getInstance();
+
+    if ($accessToken) {
+        $payload = $jwt->validateJWT($accessToken);
+
+        if ($payload) {
+            return $payload;
+        }
     }
 
-    $token = $_COOKIE['access_token'] ?? null;
+    $refreshToken = $_COOKIE['refresh_token'] ?? null;
 
-    if (!$token) {
+    if (!$refreshToken) {
         return null;
     }
 
-    $jwt = \App\Auth\JWT::getInstance();
-    $payload = $jwt->validateJWT($token);
+    $refreshTokenManager = new \App\Auth\RefreshTokenManager();
+    $userId = $refreshTokenManager->validate($refreshToken);
 
-    if ($payload) {
-        $_SESSION['user'] = $payload;
-        return $payload;
+    if (!$userId) {
+        return null;
     }
 
-    return null;
+    $userRepository = new \App\Repositories\UserRepository();
+    $user = $userRepository->findById($userId);
+
+    if (!$user) {
+        return null;
+    }
+
+    $payload = new \App\Auth\JWTPayload($user->id, $user->email, $user->role);
+    $newAccessToken = $jwt->generateJWT($payload);
+
+    setcookie('access_token', $newAccessToken, [
+        'expires' => $payload->exp,
+        'path' => '/',
+        'httponly' => true,
+        'secure' => true,
+        'samesite' => 'Strict'
+    ]);
+
+    return $payload;
 }

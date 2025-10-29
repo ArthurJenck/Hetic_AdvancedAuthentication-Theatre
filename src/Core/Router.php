@@ -19,30 +19,19 @@ class Router
 
     private function checkAuthorization(IsGranted $attribute): void
     {
-        $token = $_COOKIE['access_token'] ?? null;
+        $user = getCurrentUser();
 
-        if (!$token) {
+        if (!$user) {
             http_response_code(401);
             header("Location: " . $this->url('/login'));
             exit;
         }
 
-        $payload = $this->jwt->validateJWT($token);
-
-        if (!$payload) {
-            http_response_code(401);
-            setcookie('access_token', '', time() - 3600, $this->basePath . "/");
-            header('Location: ' . $this->url('/login'));
-            exit;
-        }
-
-        if ($attribute->role && (!isset($payload->role) || $payload->role !== $attribute->role)) {
+        if ($attribute->role && (!isset($user->role) || $user->role !== $attribute->role)) {
             http_response_code(403);
             require __DIR__ . '/../../views/error403.php';
             exit;
         }
-
-        $_SESSION['user'] = $payload;
     }
 
     private function executeRoute(string $handler, array $params): void

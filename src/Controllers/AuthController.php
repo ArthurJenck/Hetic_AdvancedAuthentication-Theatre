@@ -33,7 +33,6 @@ class AuthController
         $user = $this->userRepository->findByEmail($email);
 
         if (!$user || !$user->verifyPassword($password)) {
-            $_SESSION['error'] = 'Identifiants incorrects';
             header("Location: " . url('/login'));
             exit;
         }
@@ -115,7 +114,6 @@ class AuthController
         setcookie('access_token', '', time() - 3600, '/');
         setcookie('refresh_token', '', time() - 3600, '/');
 
-        session_destroy();
         header('Location: ' . url('/'));
     }
 }

@@ -19,8 +19,6 @@ spl_autoload_register(function ($class) {
 
 require __DIR__ . '/../src/helpers.php';
 
-session_start();
-
 use App\Core\Router;
 use App\Auth\JWT;
 

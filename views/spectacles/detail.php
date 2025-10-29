@@ -26,20 +26,6 @@
 
         <h1><?= htmlspecialchars($spectacle->title) ?></h1>
 
-        <?php if (isset($_SESSION['error'])): ?>
-            <div class="error">
-                <?= htmlspecialchars($_SESSION['error']) ?>
-                <?php unset($_SESSION['error']); ?>
-            </div>
-        <?php endif; ?>
-
-        <?php if (isset($_SESSION['success'])): ?>
-            <div class="success">
-                <?= htmlspecialchars($_SESSION['success']) ?>
-                <?php unset($_SESSION['success']); ?>
-            </div>
-        <?php endif; ?>
-
         <?php if ($spectacle->description): ?>
             <p><?= htmlspecialchars($spectacle->description) ?></p>
         <?php endif; ?>

@@ -51,7 +51,6 @@ class SpectacleController
         $seats = (int)($_POST['available_seats'] ?? 0);
 
         if (empty($title) || empty($date) || $seats <= 0) {
-            $_SESSION['error'] = "Tous les champs sont requis";
             header('Location: ' . url('/spectacles/create'));
             exit;
         }
