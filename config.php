@@ -1,5 +1,9 @@
 <?php
 
+use Da\TwoFA\Manager;
+
+$twoFaSecret = (new Manager())->generateSecretKey();
+
 return [
     'db' => [
         "host" => 'localhost',
@@ -11,5 +15,8 @@ return [
         'secret' => 'EEF5DBE1F22327DD78F4A9B5613A5',
         'access_token_expiration' => 60 * 15,
         'refresh_token_expiration' => 60 * 60 * 24 * 30,
+    ],
+    'twoFa' => [
+        'secret' => $twoFaSecret,
     ]
 ];

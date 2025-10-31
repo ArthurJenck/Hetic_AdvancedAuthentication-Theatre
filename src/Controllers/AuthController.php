@@ -37,19 +37,169 @@ class AuthController
             exit;
         }
 
-        $payload = new JWTPayload(userId: $user->id, email: $user->email, role: $user->role);
+        session_start();
 
+        if (empty($user->twofa_secret)) {
+            $_SESSION['setup_2fa_user_id'] = $user->id;
+            header("Location: " . url('/setup-2fa'));
+            exit;
+        }
+
+        $_SESSION['verify_2fa_user_id'] = $user->id;
+        header("Location: " . url('/verify-2fa'));
+    }
+
+    public function showSetup2FA(): void
+    {
+        session_start();
+
+        if (!isset($_SESSION['setup_2fa_user_id'])) {
+            header("Location: " . url("/login"));
+            exit;
+        }
+
+        $userId = $_SESSION["setup_2fa_user_id"];
+        $user = $this->userRepository->findById($userId);
+
+        if (!$user) {
+            header('Location: ' . url('/login'));
+            exit;
+        }
+
+        if (empty($user->twofa_secret)) {
+            $manager = new \Da\TwoFA\Manager();
+            $secret = $manager->generateSecretKey();
+
+            $this->userRepository->updateTwoFASecret($userId, $secret);
+
+            $user = $this->userRepository->findById($userId);
+        }
+
+        $totpUri = (new \Da\TwoFA\Service\TOTPSecretKeyUriGeneratorService(
+            'Theatre',
+            $user->email,
+            $user->twofa_secret
+        ))->run();
+
+        $qrCodeDataUri = (new \Da\TwoFA\Service\QrCodeDataUriGeneratorService($totpUri))->run();
+
+        $isSetup = true;
+        $formAction = url('/setup-2fa/complete');
+        $error = $_GET['error'] ?? null;
+
+        require __DIR__ . '/../../views/verify2fa.php';
+    }
+
+    public function complete2FASetup(): void
+    {
+        session_start();
+
+        if (!isset($_SESSION["setup_2fa_user_id"])) {
+            header("Location: " . url("/login"));
+            exit;
+        }
+
+        $userId = $_SESSION['setup_2fa_user_id'];
+        $user = $this->userRepository->findById($userId);
+
+        if (!$user) {
+            header('Location: ' . url("/login"));
+            exit;
+        }
+
+        $code = $_POST['code'] ?? '';
+
+        if (empty($code)) {
+            header('Location: ' . url('/setup-2fa?error=missing_code'));
+            exit;
+        }
+
+        $manager = new \Da\TwoFA\Manager();
+        $isValid = $manager->verify($code, $user->twofa_secret);
+
+        if (!$isValid) {
+            header('Location: ' . url('/setup-2fa?error=invalid_code'));
+            exit;
+        }
+
+        unset($_SESSION['setup_2fa_user_id']);
+
+        $payload = new JWTPayload(userId: $user->id, email: $user->email, role: $user->role);
         $accessToken = $this->jwt->generateJWT($payload);
         $refreshToken = $this->refreshTokenManager->create($user->id);
 
         setcookie("access_token", $accessToken, [
             'expires' => $payload->exp,
-            "path" => '/',
+            'httponly' => true,
+            'secure' => true,
+            'samesite' => 'Strict',
+        ]);
+
+        header('Location: ' . url("/"));
+    }
+
+    public function showVerify2FA(): void
+    {
+        session_start();
+
+        if (!isset($_SESSION['verify_2fa_user_id'])) {
+            header("Location: " . url('/login'));
+            exit;
+        }
+
+        $isSetup = false;
+        $qrCodeDataUri = null;
+        $formAction = url('/verify-2fa');
+        $error = $_GET['error'] ?? null;
+
+        require __DIR__ . '/../../views/verify2fa.php';
+    }
+
+    public function verify2FA(): void
+    {
+        session_start();
+
+        if (!isset($_SESSION['verify_2fa_user_id'])) {
+            header("Location: " . url('/login'));
+            exit;
+        }
+
+        $userId = $_SESSION['verify_2fa_user_id'];
+        $user = $this->userRepository->findById($userId);
+
+        if (!$user) {
+            header("Location: " . url('/login'));
+            exit;
+        }
+
+        $code = $_POST['code'] ?? '';
+
+        if (empty($code)) {
+            header('Location: ' . url('/verify-2fa?error=missing_code'));
+            exit;
+        }
+
+        $manager = new \Da\TwoFA\Manager();
+        $isValid = $manager->verify($code, $user->twofa_secret);
+
+        if (!$isValid) {
+            header('Location: ' . url('/verify-2fa?error=invalid_code'));
+            exit;
+        }
+
+        unset($_SESSION['verify_2fa_user_id']);
+
+        $payload = new JWTPayload(userId: $user->id, email: $user->email, role: $user->role);
+        $accessToken = $this->jwt->generateJWT($payload);
+        $refreshToken = $this->refreshTokenManager->create($user->id);
+
+        setcookie("access_token", $accessToken, [
+            'expires' => $payload->exp,
+            'path' => '/',
             'httponly' => true,
             'secure' => true,
             'samesite' => 'Strict'
         ]);
-
 
         $config = require __DIR__ . '/../../config.php';
         setcookie('refresh_token', $refreshToken, [

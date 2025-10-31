@@ -13,7 +13,8 @@
         <nav>
             <a href="<?= url('/') ?>">Accueil</a>
             <a href="<?= url('/spectacles') ?>">Spectacles</a>
-            <?php if ($user): ?>
+            <?php
+            if ($user): ?>
                 <a href="<?= url('/profile') ?>">Mon profil</a>
                 <?php if ($user->role === 'admin'): ?>
                     <a href="<?= url('/spectacles/create') ?>">Créer un spectacle</a>

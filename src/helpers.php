@@ -15,7 +15,8 @@ function getCurrentUser(): ?object
         $payload = $jwt->validateJWT($accessToken);
 
         if ($payload) {
-            return $payload;
+            $userRepository = new App\Repositories\UserRepository;
+            return $userRepository->findById($payload->sub);
         }
     }
 

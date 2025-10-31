@@ -36,4 +36,10 @@ class UserRepository
 
         return $data ? User::fromArray($data) : null;
     }
+
+    public function updateTwoFASecret(int $userId, string $secret): bool
+    {
+        $stmt = $this->pdo->prepare("UPDATE users SET twofa_secret = ? WHERE id = ?");
+        return $stmt->execute([$secret, $userId]);
+    }
 }

@@ -18,6 +18,7 @@ spl_autoload_register(function ($class) {
 });
 
 require __DIR__ . '/../src/helpers.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 use App\Core\Router;
 use App\Auth\JWT;
@@ -28,6 +29,8 @@ $router = new Router($jwt);
 $router->get('/', 'HomeController@index');
 $router->get('/login', 'AuthController@showLogin');
 $router->post('/login', 'AuthController@login');
+$router->get('/verify-2fa', 'AuthController@showVerify2FA');
+$router->post('/verify-2fa', 'AuthController@verify2FA');
 $router->get('/logout', 'AuthController@logout');
 
 $router->get('/spectacles/create', 'SpectacleController@showCreate');

@@ -8,6 +8,7 @@ class User
     public string $email;
     private string $password;
     public string $role;
+    public ?string $twofa_secret;
 
     private function __construct() {}
 
@@ -18,6 +19,7 @@ class User
         $user->email = $data["email"];
         $user->password = $data['password'];
         $user->role = $data["role"] ?? 'user';
+        $user->twofa_secret = $data['twofa_secret'] ?? null;
 
         return $user;
     }
