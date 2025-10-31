@@ -130,6 +130,16 @@ class AuthController
 
         setcookie("access_token", $accessToken, [
             'expires' => $payload->exp,
+            'path' => '/',
+            'httponly' => true,
+            'secure' => true,
+            'samesite' => 'Strict',
+        ]);
+
+        $config = require __DIR__ . '/../../config.php';
+        setcookie('refresh_token', $refreshToken, [
+            'expires' => time() + $config['jwt']['refresh_token_expiration'],
+            'path' => '/',
             'httponly' => true,
             'secure' => true,
             'samesite' => 'Strict',

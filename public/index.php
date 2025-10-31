@@ -29,6 +29,8 @@ $router = new Router($jwt);
 $router->get('/', 'HomeController@index');
 $router->get('/login', 'AuthController@showLogin');
 $router->post('/login', 'AuthController@login');
+$router->get('/setup-2fa', 'AuthController@showSetup2FA');
+$router->post('/setup-2fa/complete', 'AuthController@complete2FASetup');
 $router->get('/verify-2fa', 'AuthController@showVerify2FA');
 $router->post('/verify-2fa', 'AuthController@verify2FA');
 $router->get('/logout', 'AuthController@logout');
