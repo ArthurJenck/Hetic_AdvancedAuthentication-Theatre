@@ -10,6 +10,7 @@ class Router
 {
     private array $routes = [];
     private JWT $jwt;
+    private Container $container;
     private string $basePath;
 
     private function addRoute(string $method, string $path, string $handler): void
@@ -43,7 +44,7 @@ class Router
             throw new \Exception("Controller {$controllerClass} introuvable");
         }
 
-        $controller = new $controllerClass();
+        $controller = $this->container->resolve($controllerClass);
 
         $reflection = new ReflectionMethod($controller, $methodName);
         $attributes = $reflection->getAttributes(IsGranted::class);
@@ -56,9 +57,10 @@ class Router
         call_user_func_array([$controller, $methodName], $params);
     }
 
-    public function __construct(JWT $jwt)
+    public function __construct(JWT $jwt, Container $container)
     {
         $this->jwt = $jwt;
+        $this->container = $container;
         $scriptName = $_SERVER['SCRIPT_NAME'];
         $this->basePath = strtolower(str_replace('/index.php', '', $scriptName));
     }

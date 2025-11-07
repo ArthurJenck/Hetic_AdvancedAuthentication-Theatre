@@ -18,6 +18,8 @@
         <h1>Connexion</h1>
 
         <form method="POST" action="<?= url('/login') ?>">
+            <?= csrfField() ?>
+            
             <label for="email">Email</label>
             <input type="email" id="email" name="email" required placeholder="alicedupont@gmail.com">
 
@@ -26,6 +28,10 @@
 
             <button type="submit">Se connecter</button>
         </form>
+
+        <p style="text-align: center; margin-top: 20px;">
+            Pas encore de compte ? <a href="<?= url('/register') ?>">Inscrivez-vous</a>
+        </p>
     </div>
 </body>
 

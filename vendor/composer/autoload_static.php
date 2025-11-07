@@ -19,6 +19,7 @@ class ComposerStaticInita833ee17425f4c6255c7ed1bb6f6326e
         'P' => 
         array (
             'ParagonIE\\ConstantTime\\' => 23,
+            'PHPMailer\\PHPMailer\\' => 20,
         ),
         'D' => 
         array (
@@ -35,6 +36,10 @@ class ComposerStaticInita833ee17425f4c6255c7ed1bb6f6326e
         'ParagonIE\\ConstantTime\\' => 
         array (
             0 => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src',
+        ),
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
         'Da\\TwoFA\\' => 
         array (

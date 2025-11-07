@@ -36,3 +36,21 @@ function f()
 - Faire une application PHP "normalisée"
   -> Classes
   -> Des espace de nom (spacename)
+
+## Authentification 2FA
+
+L'utilisateur doit pouvoir s'identifier et rester reconnu par l'application avec des jetons JWT
+
+1. L'utilisateur s'identifie avec son mot de passe
+2. On demande à l'utilisateur de confirmer son identité  
+Il peut choisir entre :
+    - recevoir un mail
+    - recevoir un SMS
+    - s'identifier avec un QR code et enregistrer la référence au site dans une application TOTP
+        - Google Authenticator
+        - TOTP Authenticator
+        - Microsoft Authenticator
+3. Autoriser l'utilisateur à accéder à certaines ressources
+
+- Faire en sorte de laisser le choix à l'utilisateur d'avoir des formes de validation différentes pour l'A2F, voir moyens ci-dessus
+- Stocker méthode choisie dans base de données

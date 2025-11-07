@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'Zxing\\' => array($vendorDir . '/khanamiryan/qrcode-detector-decoder/lib'),
     'ParagonIE\\ConstantTime\\' => array($vendorDir . '/paragonie/constant_time_encoding/src'),
+    'PHPMailer\\PHPMailer\\' => array($vendorDir . '/phpmailer/phpmailer/src'),
     'Da\\TwoFA\\' => array($vendorDir . '/2amigos/2fa-library/src'),
     'Da\\QrCode\\' => array($vendorDir . '/2amigos/qrcode-library/src'),
 );

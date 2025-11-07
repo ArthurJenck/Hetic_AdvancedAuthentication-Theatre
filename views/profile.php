@@ -25,6 +25,15 @@
         <div class="user-info">
             <p><strong>Email :</strong> <?= htmlspecialchars($user->email) ?></p>
             <p><strong>Rôle :</strong> <?= htmlspecialchars($user->role) ?></p>
+            <p>
+                <strong>Authentification 2FA :</strong> 
+                <?php if ($user->has2FAEnabled()): ?>
+                    <span style="color: green;">✓ Activée (<?= htmlspecialchars($user->twofa_method) ?>)</span>
+                <?php else: ?>
+                    <span style="color: red;">✕ Désactivée</span>
+                <?php endif; ?>
+            </p>
+            <a href="<?= url('/profile/2fa') ?>" class="btn-2fa">Gérer l'authentification 2FA</a>
         </div>
 
         <h2>Mes réservations</h2>
@@ -42,6 +51,22 @@
 
         <a href="<?= url('/spectacles') ?>">Voir tous les spectacles</a>
     </div>
+
+    <style>
+        .btn-2fa {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .btn-2fa:hover {
+            background: #0056b3;
+        }
+    </style>
 </body>
 
 </html>

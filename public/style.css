@@ -157,3 +157,187 @@ button:hover {
   margin-bottom: 20px;
   font-size: 14px;
 }
+
+input[type="tel"] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+input[type="tel"]:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.info {
+  font-size: 14px;
+  color: #666;
+  margin-top: 5px;
+  margin-bottom: 20px;
+}
+
+.method-selection {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.method-card {
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: white;
+  width: 100%;
+  text-align: left;
+}
+
+.method-card:hover {
+  border-color: #007bff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: #e4e4e4;
+}
+
+.method-icon {
+  font-size: 48px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.method-content h3 {
+  color: #333;
+  margin: 10px 0;
+  font-size: 18px;
+}
+
+.method-content p {
+  font-size: 14px;
+  color: #666;
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-secondary:hover {
+  background: #5a6268;
+}
+
+.sms-notification,
+.notification-message {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: #d1ecf1;
+  color: #0c5460;
+  border-left: 4px solid #17a2b8;
+  padding: 15px;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 400px;
+  z-index: 9999;
+}
+
+.info-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.status-enabled {
+  color: #28a745;
+  padding: 15px;
+  background: #d4edda;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.status-disabled {
+  color: #dc3545;
+  padding: 15px;
+  background: #f8d7da;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: #0056b3;
+}
+
+.btn-success {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-success:hover {
+  background: #218838;
+}
+
+.btn-danger {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-danger:hover {
+  background: #c82333;
+}
+
+.info-section {
+  margin: 30px 0;
+}
+
+.info-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.info-section li {
+  padding: 8px 0;
+  padding-left: 25px;
+  position: relative;
+}
+
+.info-section li:before {
+  content: "•";
+  position: absolute;
+  left: 5px;
+  color: #007bff;
+  font-weight: bold;
+}

@@ -22,7 +22,7 @@ class ReservationController
     {
         $spectacleId = (int)($_POST['spectacle_id'] ?? 0);
         $user = getCurrentUser();
-        $userId = $user->sub;
+        $userId = $user->id;
 
         if (!$spectacleId) {
             http_response_code(400);
@@ -47,7 +47,7 @@ class ReservationController
     public function myReservations(): void
     {
         $user = getCurrentUser();
-        $userId = $user->sub;
+        $userId = $user->id;
         $reservations =  $this->reservationRepository->findByUserId($userId);
 
         require __DIR__ . '/../../views/profile.php';
